@@ -37,18 +37,14 @@ public class MainActivity extends AppCompatActivity {
         testEdit = (EditText) findViewById(R.id.testEdit);
 
         testEdit.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);
-//        View view = findViewById(R.id.layout);
-//        view.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                return true;
-//            }
-//        });
         imm.hideSoftInputFromWindow(testEdit.getWindowToken(), 0);
 
 
         textView = (TextView)findViewById(R.id.textMessage);
         toggleButton = (ToggleButton)findViewById(R.id.testToggle);
+
+        Button pickBtn = (Button)findViewById(R.id.pick);
+        pickBtn.setOnClickListener(bt -> pickme());
 
         Button outBtn = (Button)findViewById(R.id.testBtn);
         outBtn.setOnClickListener(bt -> finish());
@@ -74,6 +70,16 @@ public class MainActivity extends AppCompatActivity {
                 bluetoothKeyboardController.setKeyState(BluetoothKeyboardController.INPUT_STATE.NUM);
                 return true;
 
+            case KeyEvent.KEYCODE_DPAD_LEFT:
+            case KeyEvent.KEYCODE_DPAD_RIGHT:
+            case KeyEvent.KEYCODE_DPAD_UP:
+            case KeyEvent.KEYCODE_DPAD_DOWN:
+                bluetoothKeyboardController.setDPAD(true);
+                return true;
+
+            case KeyEvent.KEYCODE_NUMPAD_0:
+                input = 0;
+                break;
             case KeyEvent.KEYCODE_NUMPAD_1:
                 input = 1;
                 break;
@@ -101,8 +107,14 @@ public class MainActivity extends AppCompatActivity {
             case KeyEvent.KEYCODE_NUMPAD_9:
                 input = 9;
                 break;
-            case KeyEvent.KEYCODE_NUMPAD_0:
-                input = 0;
+            case KeyEvent.KEYCODE_TV_INPUT_COMPOSITE_2:     //STU
+                input = 10;
+                break;
+            case KeyEvent.KEYCODE_TV_MEDIA_CONTEXT_MENU:    //XYZ
+                input = 11;
+                break;
+            case KeyEvent.KEYCODE_TV_INPUT_COMPONENT_1:     //.,!'
+                input = 12;
                 break;
         }
         bluetoothKeyboardController.setKeySignal(input);
@@ -118,9 +130,9 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    //    private void pickme()
-//    {
-//        imm.showInputMethodPicker();
-//    }
+        private void pickme()
+    {
+        imm.showInputMethodPicker();
+    }
 
 }

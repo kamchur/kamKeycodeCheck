@@ -42,13 +42,20 @@ public class BluetoothKeyboardController {
                 break;
 
             case ENG:
-                // setEnglishMaker( signal );
+                bluetoothKeyboardEng.setEnglishMaker(signal);
                 break;
 
             case NUM:
                 bluetoothKeyboardNum.setNumberMaker(signal);
                 break;
         }
+    }
+
+    private boolean DPAD = false;
+
+    public void setDPAD(boolean DPAD) {
+        TJLog.e("kam -- DPAD : " + DPAD);
+        this.DPAD = DPAD;
     }
 
     public void finishComposingText()

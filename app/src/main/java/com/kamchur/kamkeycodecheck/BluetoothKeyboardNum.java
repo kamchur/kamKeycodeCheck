@@ -5,10 +5,6 @@ import android.widget.EditText;
 public class BluetoothKeyboardNum {
     private EditText currentInputConnection;
 
-    public void setCurrentInputConnection(EditText currentInputConnection) {
-        this.currentInputConnection = currentInputConnection;
-    }
-
     public BluetoothKeyboardNum(EditText currentInputConnection) {
         this.currentInputConnection = currentInputConnection;
     }
@@ -50,7 +46,8 @@ public class BluetoothKeyboardNum {
                 input = '9';
                 break;
         }
-        currentInputConnection.getText().insert(currentInputConnection.getText().length() ,put(input));
+        TJLog.d("kam -- getSelectionEnd : " + currentInputConnection.getSelectionEnd());
+        currentInputConnection.getText().insert(currentInputConnection.getSelectionEnd() ,put(input));
     }
 
     public String put(char currentText) { return Character.toString(currentText); }
