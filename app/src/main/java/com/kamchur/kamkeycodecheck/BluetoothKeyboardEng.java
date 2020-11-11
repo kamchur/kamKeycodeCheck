@@ -40,6 +40,7 @@ public class BluetoothKeyboardEng {
     private final short btn_feel = 0x12;
 
     private short btn_state = -1;
+    private boolean finishComposing = false;
 
     public void setEnglishMaker(int signal)
     {
@@ -48,7 +49,7 @@ public class BluetoothKeyboardEng {
             case 0:
                 if (btn_state != btn_vw)
                 {
-                    finishComposingText();
+                    finishComposing = true;
                     order_vw = 0;
                 }
                 btn_state = btn_vw;
@@ -67,7 +68,7 @@ public class BluetoothKeyboardEng {
             case 1:
                 if (btn_state != btn_ab)
                 {
-                    finishComposingText();
+                    finishComposing = true;
                     order_ab = 0;
                 }
                 btn_state = btn_ab;
@@ -86,7 +87,7 @@ public class BluetoothKeyboardEng {
             case 2:
                 if (btn_state != btn_cd)
                 {
-                    finishComposingText();
+                    finishComposing = true;
                     order_cd = 0;
                 }
                 btn_state = btn_cd;
@@ -105,7 +106,7 @@ public class BluetoothKeyboardEng {
             case 3:
                 if (btn_state != btn_ef)
                 {
-                    finishComposingText();
+                    finishComposing = true;
                     order_ef = 0;
                 }
                 btn_state = btn_ef;
@@ -124,7 +125,7 @@ public class BluetoothKeyboardEng {
             case 4:
                 if (btn_state != btn_gh)
                 {
-                    finishComposingText();
+                    finishComposing = true;
                     order_gh = 0;
                 }
                 btn_state = btn_gh;
@@ -143,7 +144,7 @@ public class BluetoothKeyboardEng {
             case 5:
                 if (btn_state != btn_ij)
                 {
-                    finishComposingText();
+                    finishComposing = true;
                     order_ij = 0;
                 }
                 btn_state = btn_ij;
@@ -162,7 +163,7 @@ public class BluetoothKeyboardEng {
             case 6:
                 if (btn_state != btn_kl)
                 {
-                    finishComposingText();
+                    finishComposing = true;
                     order_kl = 0;
                 }
                 btn_state = btn_kl;
@@ -181,7 +182,7 @@ public class BluetoothKeyboardEng {
             case 7:
                 if (btn_state != btn_mn)
                 {
-                    finishComposingText();
+                    finishComposing = true;
                     order_mn = 0;
                 }
                 btn_state = btn_mn;
@@ -200,7 +201,7 @@ public class BluetoothKeyboardEng {
             case 8:
                 if (btn_state != btn_op)
                 {
-                    finishComposingText();
+                    finishComposing = true;
                     order_op = 0;
                 }
                 btn_state = btn_op;
@@ -219,7 +220,7 @@ public class BluetoothKeyboardEng {
             case 9:
                 if (btn_state != btn_qr)
                 {
-                    finishComposingText();
+                    finishComposing = true;
                     order_qr = 0;
                 }
                 btn_state = btn_qr;
@@ -238,7 +239,7 @@ public class BluetoothKeyboardEng {
             case 10:    //STU
                 if (btn_state != btn_stu)
                 {
-                    finishComposingText();
+                    finishComposing = true;
                     order_stu = 0;
                 }
                 btn_state = btn_stu;
@@ -261,7 +262,7 @@ public class BluetoothKeyboardEng {
             case 11:    //XYZ
                 if (btn_state != btn_xyz)
                 {
-                    finishComposingText();
+                    finishComposing = true;
                     order_xyz = 0;
                 }
                 btn_state = btn_xyz;
@@ -284,7 +285,7 @@ public class BluetoothKeyboardEng {
             case 12:    //.,!'
                 if (btn_state != btn_feel)
                 {
-                    finishComposingText();
+                    finishComposing = true;
                     order_feel = 0;
                 }
                 btn_state = btn_feel;
@@ -310,7 +311,8 @@ public class BluetoothKeyboardEng {
                 break;
         }
 //        currentinputTextConnection.getText().insert(currentinputTextConnection.getSelectionEnd(), put(inputText));
-        setComposingText(inputText);
+        setComposingText(inputText, finishComposing);
+        finishComposing = false;
     }
 
 
@@ -321,12 +323,19 @@ public class BluetoothKeyboardEng {
         currentinputTextConnection.getText().insert(currentinputTextConnection.getText().length()+1, "");
     }
 
-    private void setComposingText(char input)
+    private void setComposingText(char input, boolean composing)
     {
         int len = currentinputTextConnection.getText().length();
         TJLog.d("kam -- len : " + len);
-        if (len == 0) currentinputTextConnection.getText().insert(len, put(input));
-        else currentinputTextConnection.getText().replace(len-1, len, put(input));
+        if (composing)
+        {
+            currentinputTextConnection.append(put(input));
+        }
+        else
+        {
+            if (len == 0) currentinputTextConnection.append(put(input));
+            else currentinputTextConnection.getText().replace(len-1, len, put(input));
+        }
     }
 
     private String put(char currentText) { return Character.toString(currentText); }
