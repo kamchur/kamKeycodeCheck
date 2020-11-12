@@ -1,21 +1,17 @@
 package com.kamchur.kamkeycodecheck;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Looper;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
-import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.ToggleButton;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Locale;
 
@@ -28,25 +24,26 @@ public class MainActivity extends AppCompatActivity {
     BluetoothKeyboardController bluetoothKeyboardController;
 
     InputMethodManager imm;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         testEdit = (EditText) findViewById(R.id.testEdit);
 
         testEdit.setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);
         imm.hideSoftInputFromWindow(testEdit.getWindowToken(), 0);
 
 
-        textView = (TextView)findViewById(R.id.textMessage);
-        toggleButton = (ToggleButton)findViewById(R.id.testToggle);
+        textView = (TextView) findViewById(R.id.textMessage);
+        toggleButton = (ToggleButton) findViewById(R.id.testToggle);
 
-        Button pickBtn = (Button)findViewById(R.id.pick);
+        Button pickBtn = (Button) findViewById(R.id.pick);
         pickBtn.setOnClickListener(bt -> pickme());
 
-        Button outBtn = (Button)findViewById(R.id.testBtn);
+        Button outBtn = (Button) findViewById(R.id.testBtn);
         outBtn.setOnClickListener(bt -> finish());
 
         bluetoothKeyboardController = new BluetoothKeyboardController(testEdit);
@@ -54,12 +51,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        TJLog.i(String.format(Locale.KOREA,"[keyCode'Down'] : %d ,\n [event] : %s", keyCode, event));
-        textView.setText(String.format(Locale.KOREA,"[keyCode] : %d , [event] : %s", keyCode, event));
+        TJLog.i(String.format(Locale.KOREA, "[keyCode'Down'] : %d ,\n [event] : %s", keyCode, event));
+        textView.setText(String.format(Locale.KOREA, "[keyCode] : %d , [event] : %s", keyCode, event));
 
         int input = -1;
-        switch(keyCode)
-        {
+        switch (keyCode) {
             case KeyEvent.KEYCODE_KANA:
                 bluetoothKeyboardController.setKeyState(BluetoothKeyboardController.INPUT_STATE.HAN);
                 return true;
@@ -130,9 +126,13 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-        private void pickme()
-    {
+    private void pickme() {
         imm.showInputMethodPicker();
     }
 
+
+    @Override
+    public Looper getMainLooper() {
+        return super.getMainLooper();
+    }
 }

@@ -55,6 +55,7 @@ public class BluetoothKeyboardController {
 
     public void setDPAD(boolean DPAD) {
         TJLog.e("kam -- DPAD : " + DPAD);
+        TJLog.e("kam -- currentPosition : " + currentInputConnection.getSelectionEnd());
         this.DPAD = DPAD;
     }
 

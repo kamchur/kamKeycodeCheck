@@ -3,10 +3,10 @@ package com.kamchur.kamkeycodecheck;
 import android.widget.EditText;
 
 public class BluetoothKeyboardEng {
-    private EditText currentinputTextConnection;
+    private EditText currentInputTextConnection;
 
     public BluetoothKeyboardEng(EditText currentinputTextConnection) {
-        this.currentinputTextConnection = currentinputTextConnection;
+        this.currentInputTextConnection = currentinputTextConnection;
     }
 
     char inputText = '\u0000';
@@ -310,7 +310,6 @@ public class BluetoothKeyboardEng {
                 }
                 break;
         }
-//        currentinputTextConnection.getText().insert(currentinputTextConnection.getSelectionEnd(), put(inputText));
         setComposingText(inputText, finishComposing);
         finishComposing = false;
     }
@@ -320,21 +319,36 @@ public class BluetoothKeyboardEng {
     {
 //        currentinputTextConnection.setSelection(currentinputTextConnection.getText().length());
 //        currentinputTextConnection.requestFocus();
-        currentinputTextConnection.getText().insert(currentinputTextConnection.getText().length()+1, "");
+        currentInputTextConnection.getText().insert(currentInputTextConnection.getText().length()+1, "");
     }
 
     private void setComposingText(char input, boolean composing)
     {
-        int len = currentinputTextConnection.getText().length();
-        TJLog.d("kam -- len : " + len);
-        if (composing)
-        {
-            currentinputTextConnection.append(put(input));
+//        int nowCursorPosition = currentinputTextConnection.getText().length();
+        int nowCursorPosition = currentInputTextConnection.getSelectionEnd();
+        int nowTextLength = currentInputTextConnection.getText().length();
+        TJLog.d("kam -- cursor : " + nowCursorPosition);
+        TJLog.d("kam -- TextLen : " + nowTextLength);
+
+        if (nowCursorPosition == nowTextLength) {
+            if (composing) {
+                currentInputTextConnection.append(put(input));
+            } else {
+                if (nowCursorPosition == 0) currentInputTextConnection.append(put(input));  //첫 글자
+                else currentInputTextConnection.getText().replace(nowCursorPosition - 1, nowCursorPosition, put(input));
+            }
         }
         else
         {
-            if (len == 0) currentinputTextConnection.append(put(input));
-            else currentinputTextConnection.getText().replace(len-1, len, put(input));
+            //커서 포지션이 다르다는것은 방향키로 현재 커서를 바꿨음을 감지
+            if (composing)
+            {
+                currentInputTextConnection.getText().insert(nowCursorPosition,put(input));
+            }
+            else
+            {
+                currentInputTextConnection.getText().replace(nowCursorPosition -1, nowCursorPosition, put(input));
+            }
         }
     }
 
