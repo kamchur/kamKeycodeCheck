@@ -1,5 +1,7 @@
 package com.kamchur.kamkeycodecheck;
 
+import android.os.Handler;
+import android.os.Message;
 import android.widget.EditText;
 
 public class BluetoothKeyboardEng {
@@ -40,10 +42,12 @@ public class BluetoothKeyboardEng {
     private final short btn_feel = 0x12;
 
     private short btn_state = -1;
-    private boolean finishComposing = false;
+    private int lastCursorPosition = -1;
+    private boolean finishComposing = false;    //true:commit , false:ing···
 
     public void setEnglishMaker(int signal)
     {
+        mHandler.removeMessages(1);
         switch(signal)
         {
             case 0:
@@ -310,8 +314,9 @@ public class BluetoothKeyboardEng {
                 }
                 break;
         }
+        TJLog.e("kam --> composing : " + finishComposing);
         setComposingText(inputText, finishComposing);
-        finishComposing = false;
+        mHandler.sendEmptyMessage(0);   //1.8s 뒤 입력 ( A→B→A→B···)
     }
 
 
@@ -324,7 +329,6 @@ public class BluetoothKeyboardEng {
 
     private void setComposingText(char input, boolean composing)
     {
-//        int nowCursorPosition = currentinputTextConnection.getText().length();
         int nowCursorPosition = currentInputTextConnection.getSelectionEnd();
         int nowTextLength = currentInputTextConnection.getText().length();
         TJLog.d("kam -- cursor : " + nowCursorPosition);
@@ -344,13 +348,37 @@ public class BluetoothKeyboardEng {
             if (composing)
             {
                 currentInputTextConnection.getText().insert(nowCursorPosition,put(input));
+                lastCursorPosition = currentInputTextConnection.getSelectionEnd();
             }
             else
             {
-                currentInputTextConnection.getText().replace(nowCursorPosition -1, nowCursorPosition, put(input));
+                if (lastCursorPosition == nowCursorPosition) currentInputTextConnection.getText().replace(nowCursorPosition -1, nowCursorPosition, put(input));
+                else
+                {
+                    currentInputTextConnection.getText().insert(nowCursorPosition,put(input));
+                    lastCursorPosition = currentInputTextConnection.getSelectionEnd();
+                }
             }
         }
+        finishComposing = false;
     }
+
+    private Handler mHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what)
+            {
+                case 0:
+                    sendEmptyMessageDelayed(1, 1800);
+                    break;
+                case 1:
+//                    currentInputTextConnection.getText().insert(currentInputTextConnection.getSelectionEnd(), Character.toString(inputText));
+                    btn_state = -1;
+                    break;
+            }
+        }
+    };
 
     private String put(char currentText) { return Character.toString(currentText); }
 }
